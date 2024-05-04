@@ -7,12 +7,23 @@ import AHome from './Admin/AHome';
 import ALogin from './Admin/Alogin';
 import ANotice from './Admin/ANotice';
 import Searching from './Admin/Searching';
+import IDCard from './Admin/IDCard';
 
 const stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
       <stack.Navigator>
+        <stack.Screen
+          name="ID Card"
+          component={IDCard}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              backgroundColor: 'white',
+            },
+          }}
+        />
         <stack.Screen
           name="ALogin"
           component={ALogin}
