@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
+  BackHandler,
 } from 'react-native';
 import DropDown from './AComponent/DropwDown';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
@@ -19,14 +20,20 @@ import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import {io} from 'socket.io-client';
 import Modals from './AComponent/Modal';
 import {CommonActions, useNavigation} from '@react-navigation/native';
+import {Circle} from 'react-native-animated-spinkit';
 // const socket = io('https://reactnativebackendnew.onrender.com');
 // const url = 'http://192.168.1.6:4000';
-const url = 'https://reactnativebackendnew.onrender.com';
+const url = 'http://3.110.47.78:4000';
+
+// const url = 'https://reactnativebackendnew.onrender.com';
 
 export default function Searching() {
   const {width, height} = useWindowDimensions();
   const classarr = [
     'All',
+    'NUR',
+    'LKG',
+    'UKG',
     'I',
     'II',
     'III',
@@ -40,43 +47,17 @@ export default function Searching() {
     'XI',
     'XII',
   ];
-  const secarr = [
-    'ALL',
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-  ];
+  const secarr = ['ALL', 'A', 'B', 'C', 'D'];
   const [classindex, setClassIndex] = useState<number>(-1);
   const [secindex, setSecIndex] = useState<number>(0);
   const [text, setText] = useState<string>('');
   const [list, setList] = useState<any[]>([]);
+  const [mainlist, setMainlist] = useState<any[]>([]);
   const [lcheck, setLcheck] = useState<Array<boolean>>(new Array(0));
   const [mcheck, setMcheck] = useState<boolean>(true);
   const [textmsg, setTextmsg] = useState<string>('');
   const [succes, setSucces] = useState<boolean>(false);
+  const [spin, setSpin] = useState<boolean>(false);
   const [emsgVisible, setEmsgVisible] = useState<boolean>(false);
   const [errmsg, setErrmsg] = useState<string>('');
   const navigation = useNavigation();
@@ -84,6 +65,8 @@ export default function Searching() {
   useEffect(() => {
     if (classindex > -1) {
       console.log('rerender ', classindex);
+      setList([]);
+      setSpin(true);
       const query = `${url}/searchstd?class=${classarr[classindex]}&sec=${
         secindex > 0 ? secarr[secindex] : 'null'
       }&roll=${text.length > 0 ? text : 'null'}`;
@@ -94,11 +77,13 @@ export default function Searching() {
             response.json().then((data: any) => {
               setList(data);
               setLcheck(new Array(data.length).fill(false));
+              setSpin(false);
               console.log(data);
               console.log(typeof data);
             });
           } else if (response.status === 404) {
             setList([]);
+            setSpin(false);
           }
         })
         .catch((error: any) => {
@@ -107,7 +92,18 @@ export default function Searching() {
       console.log('rerender1');
     }
   }, [classindex, secindex, text]);
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', (): boolean => {
+      navigation.navigate('AHome');
+      return true;
+    });
 
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', (): boolean => {
+        return true;
+      });
+    };
+  }, []);
   const onSubmit = () => {
     const socket = io(url);
     if (classindex === -1) {
@@ -135,6 +131,8 @@ export default function Searching() {
         socket.emit('admin', obj);
         setSucces(true);
       } else if (classindex > 0) {
+        setMainlist([]);
+        setList([]);
         if (mcheck === true) {
           const obj = {
             message: textmsg,
@@ -331,7 +329,7 @@ export default function Searching() {
           arr={secarr}
           text={secarr[secindex]}
           fun={(value: number) => {
-            console.log('secindex ', secindex);
+            console.log('secindex', secindex);
             setSecIndex(value);
           }}
         />
@@ -575,6 +573,39 @@ export default function Searching() {
           </View>
         </KeyboardAccessory>
       </View>
+      {spin && (
+        <View
+          style={{
+            position: 'absolute',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            top: height / 3,
+            left: width / 2.5,
+            alignItems: 'center',
+          }}>
+          <Circle size={100} color="black"></Circle>
+        </View>
+      )}
+      {spin === false && list.length === 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            top: height / 3,
+            width: width,
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'gray',
+              textAlign: 'center',
+              fontSize: 30,
+            }}>
+            {classindex === 0 ? 'All Stduent Selected' : 'No Data'}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

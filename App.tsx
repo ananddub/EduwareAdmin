@@ -8,6 +8,7 @@ import ALogin from './Admin/Alogin';
 import ANotice from './Admin/ANotice';
 import Searching from './Admin/Searching';
 import IDCard from './Admin/IDCard';
+import PDF from './Admin/pdf';
 
 const stack = createNativeStackNavigator();
 function App() {
@@ -44,6 +45,14 @@ function App() {
             },
           }}
         />
+
+        <stack.Screen
+          name="ANotice"
+          component={ANotice}
+          options={{
+            title: 'Admin Annoucment List',
+          }}
+        />
         <stack.Screen
           name="Sealecting"
           component={Searching}
@@ -52,13 +61,6 @@ function App() {
             headerStyle: {
               backgroundColor: 'white',
             },
-          }}
-        />
-        <stack.Screen
-          name="ANotice"
-          component={ANotice}
-          options={{
-            title: 'Admin Annoucment List',
           }}
         />
       </stack.Navigator>

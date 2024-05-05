@@ -21,7 +21,9 @@ import Modals from './AComponent/Modal';
 import {Circle} from 'react-native-animated-spinkit';
 // const url = 'https://reactnativebackendnew.onrender.com';
 // const url = 'http://192.168.1.6:4000';
-const url = 'https://reactnativebackendnew.onrender.com';
+const url = 'http://3.110.47.78:4000';
+
+// const url = 'https://reactnativebackendnew.onrender.com';
 
 const socket = io(url);
 function ANotice(): JSX.Element {

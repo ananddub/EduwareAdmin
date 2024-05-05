@@ -110,7 +110,23 @@ function AHome() {
             />
             <Text style={styles.text}>Profile</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigator.navigate('ID Card');
+            }}
+            style={styles.box}>
+            <Image
+              source={require('../assets/idcard.png')}
+              style={{
+                width: 70,
+                height: 70,
+                top: -10,
+              }}
+            />
+            <Text style={styles.text}>ID Card</Text>
+          </TouchableOpacity>
         </View>
+
         <View style={{height: 30}}></View>
       </ScrollView>
     </View>
